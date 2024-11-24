@@ -3,39 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Furniture Preview</title>
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.3.2/aframe/build/aframe-ar.min.js"></script>
+  <title>Markerless AR Furniture</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@2.2.0/aframe/build/aframe-ar.min.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
+  <a-scene embedded arjs>
+    <!-- Kamera -->
+    <a-entity camera look-controls>
+      <a-entity cursor="rayOrigin: mouse"></a-entity>
+    </a-entity>
 
-  <!-- Scene -->
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;">
-    
-    <!-- Default Light -->
-    <a-light type="ambient" intensity="0.7"></a-light>
-    <a-light type="directional" position="1 1 0.5" intensity="0.5"></a-light>
+    <!-- Model Furniture 1 -->
+    <a-entity 
+      id="model1" 
+      gltf-model="model/chair.glb" 
+      scale="0.3 0.3 0.3" 
+      position="0 0 -1" 
+      visible="false">
+    </a-entity>
 
-    <!-- Ground -->
-    <a-plane
-      position="0 0 0"
-      rotation="-90 0 0"
-      width="10"
-      height="10"
-      color="#E0E0E0"
-      shadow></a-plane>
-
-    <!-- 3D Model Furniture -->
-    <a-entity
-      position="0 0.2 -2"
-      scale="0.5 0.5 0.5"
-      gltf-model="chair.glb"
-      rotation="0 45 0"
-      gesture-handler></a-entity>
-
+    <!-- Model Furniture 2 -->
+    <a-entity 
+      id="model2" 
+      gltf-model="model/table.glb" 
+      scale="0.5 0.5 0.5" 
+      position="0 0 -1" 
+      visible="false">
+    </a-entity>
   </a-scene>
 
+  <!-- Kontrol Tombol -->
+  <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10;">
+    <button onclick="showModel('model1')">Kursi</button>
+    <button onclick="showModel('model2')">Meja</button>
+  </div>
+
+  <script>
+    // Referensi elemen
+    const model1 = document.querySelector("#model1");
+    const model2 = document.querySelector("#model2");
+
+    // Fungsi untuk menampilkan model
+    function showModel(modelId) {
+      // Sembunyikan semua model
+      model1.setAttribute("visible", "false");
+      model2.setAttribute("visible", "false");
+
+      // Tampilkan model yang dipilih
+      const selectedModel = document.querySelector(`#${modelId}`);
+      selectedModel.setAttribute("visible", "true");
+    }
+
+    // Event untuk memindahkan model saat klik pada layar
+    const scene = document.querySelector("a-scene");
+
+    scene.addEventListener("click", (event) => {
+      const intersect = event.detail.intersection;
+
+      // Hanya pindahkan model jika ada model yang aktif
+      if (intersect) {
+        const selectedModel = document.querySelector("[visible='true']");
+        if (selectedModel) {
+          const position = intersect.point;
+          selectedModel.setAttribute("position", `${position.x} ${position.y} ${position.z}`);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
