@@ -89,21 +89,36 @@
     // Referensi elemen model
     const model1 = document.querySelector("#model1");
     const model2 = document.querySelector("#model2");
-
-    // Fungsi untuk menampilkan model
+  
+    // Referensi kamera
+    const camera = document.querySelector("a-entity[camera]");
+  
+    // Fungsi untuk menampilkan model di depan kamera
     function showModel(modelId) {
       // Sembunyikan semua model
       model1.setAttribute("visible", "false");
       model2.setAttribute("visible", "false");
-
-      // Tampilkan model yang dipilih
+  
+      // Ambil posisi kamera saat ini
+      const cameraPosition = camera.getAttribute("position");
+      const cameraDirection = camera.object3D.getWorldDirection(new THREE.Vector3());
+  
+      // Hitung posisi di depan kamera (1 meter ke depan)
+      const summonPosition = {
+        x: cameraPosition.x + cameraDirection.x,
+        y: cameraPosition.y,
+        z: cameraPosition.z + cameraDirection.z
+      };
+  
+      // Tampilkan model yang dipilih dan atur posisinya
       const selectedModel = document.querySelector(`#${modelId}`);
       selectedModel.setAttribute("visible", "true");
+      selectedModel.setAttribute("position", `${summonPosition.x} ${summonPosition.y} ${summonPosition.z}`);
     }
-
-    // Event untuk memindahkan model
+  
+    // Event untuk memindahkan model dengan klik
     const scene = document.querySelector("a-scene");
-
+  
     scene.addEventListener("click", (event) => {
       const selectedModel = document.querySelector("[visible='true']");
       if (selectedModel) {
