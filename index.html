@@ -2,12 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Markerless AR Furniture</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@2.2.0/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
+    }
+    a-scene {
+      height: 100%;
+      width: 100%;
+    }
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    button:active {
+      background-color: #003f7f;
+    }
+
+    /* Media Query untuk perangkat kecil */
+    @media (max-width: 600px) {
+      button {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+    }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body>
   <a-scene embedded arjs>
     <!-- Kamera AR -->
     <a-entity camera look-controls>
@@ -26,17 +72,17 @@
     <!-- Model Furniture 2 -->
     <a-entity 
       id="model2" 
-      gltf-model="model/table.glb" 
-      scale="0.5 0.5 0.5" 
+      gltf-model="model/cupboard.glb" 
+      scale="0.3 0.3 0.3" 
       position="0 0 -1" 
       visible="false">
     </a-entity>
   </a-scene>
 
   <!-- Kontrol Tombol -->
-  <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10;">
+  <div id="controls">
     <button onclick="showModel('model1')">Kursi</button>
-    <button onclick="showModel('model2')">Meja</button>
+    <button onclick="showModel('model2')">Lemari</button>
   </div>
 
   <script>
@@ -61,7 +107,6 @@
     scene.addEventListener("click", (event) => {
       const selectedModel = document.querySelector("[visible='true']");
       if (selectedModel) {
-        // Hitung posisi layar untuk AR
         const touchPoint = event.detail.intersection?.point;
         if (touchPoint) {
           selectedModel.setAttribute("position", `${touchPoint.x} ${touchPoint.y} ${touchPoint.z}`);
