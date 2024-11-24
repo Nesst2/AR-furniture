@@ -9,9 +9,9 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs>
-    <!-- Kamera -->
+    <!-- Kamera AR -->
     <a-entity camera look-controls>
-      <a-entity cursor="rayOrigin: mouse"></a-entity>
+      <a-entity cursor="rayOrigin: cursor"></a-entity>
     </a-entity>
 
     <!-- Model Furniture 1 -->
@@ -40,7 +40,7 @@
   </div>
 
   <script>
-    // Referensi elemen
+    // Referensi elemen model
     const model1 = document.querySelector("#model1");
     const model2 = document.querySelector("#model2");
 
@@ -55,18 +55,16 @@
       selectedModel.setAttribute("visible", "true");
     }
 
-    // Event untuk memindahkan model saat klik pada layar
+    // Event untuk memindahkan model
     const scene = document.querySelector("a-scene");
 
     scene.addEventListener("click", (event) => {
-      const intersect = event.detail.intersection;
-
-      // Hanya pindahkan model jika ada model yang aktif
-      if (intersect) {
-        const selectedModel = document.querySelector("[visible='true']");
-        if (selectedModel) {
-          const position = intersect.point;
-          selectedModel.setAttribute("position", `${position.x} ${position.y} ${position.z}`);
+      const selectedModel = document.querySelector("[visible='true']");
+      if (selectedModel) {
+        // Hitung posisi layar untuk AR
+        const touchPoint = event.detail.intersection?.point;
+        if (touchPoint) {
+          selectedModel.setAttribute("position", `${touchPoint.x} ${touchPoint.y} ${touchPoint.z}`);
         }
       }
     });
